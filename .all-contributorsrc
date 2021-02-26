@@ -7,9 +7,20 @@
     "README.md"
   ],
   "imageSize": 100,
-  "commit": true,
+  "commit": false,
   "commitConvention": "none",
-  "contributors": [],
+  "contributors": [
+    {
+      "login": "noahnu",
+      "name": "Noah",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1297096?v=4",
+      "profile": "https://noahnu.com/",
+      "contributions": [
+        "code",
+        "infra"
+      ]
+    }
+  ],
   "contributorsPerLine": 7,
   "skipCi": true
 }
