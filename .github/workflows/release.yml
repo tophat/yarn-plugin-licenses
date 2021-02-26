@@ -11,7 +11,7 @@ env:
 
 jobs:
   release:
-    name: Publish Inject Inline Html Webpack Plugin
+    name: Publish Yarn Plugin Licenses
     runs-on: ubuntu-20.04
     steps:
         - uses: actions/checkout@v2
@@ -26,16 +26,16 @@ jobs:
           id: yarn-cache
           uses: actions/cache@v2
           with:
-            path: ./.yarn/cache
+            path: |
+              ./.yarn
+              ./.pnp.*
             key: ${{ env.NODE_VERSION }}-${{ env.YARN_VERSION }}-${{ hashFiles('yarn.lock') }}
         - name: Install dependencies
           run: yarn install --immutable
         - name: Build Package
-          run: yarn pack --filename ${ARTIFACT_DIR:-artifacts}/package.tgz
+          run: yarn build
         - name: Publish Package
-          env:
-            NPM_PUBLISH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN }}
-          run: yarn npm publish --access public
+          run: echo "No publish capability at the moment."
         - name: Upload Artifacts
           if: ${{ always() }}
           uses: actions/upload-artifact@v2

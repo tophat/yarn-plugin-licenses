@@ -60,7 +60,9 @@ jobs:
           id: yarn-cache
           uses: actions/cache@v2
           with:
-            path: ./.yarn/cache
+            path: |
+              ./.yarn
+              ./.pnp.*
             key: ${{ env.NODE_VERSION }}-${{ env.YARN_VERSION }}-${{ hashFiles('yarn.lock') }}
         - name: Install dependencies
           run: yarn install --immutable
@@ -99,12 +101,14 @@ jobs:
           id: yarn-cache
           uses: actions/cache@v2
           with:
-            path: ./.yarn/cache
+            path: |
+              ./.yarn
+              ./.pnp.*
             key: ${{ env.NODE_VERSION }}-${{ env.YARN_VERSION }}-${{ hashFiles('yarn.lock') }}
         - name: Install dependencies
           run: yarn install --immutable
         - name: Build
-          run: yarn pack --filename ${ARTIFACT_DIR:-artifacts}/package.tgz
+          run: yarn build
         - name: Upload Artifacts
           uses: actions/upload-artifact@v2
           with:
