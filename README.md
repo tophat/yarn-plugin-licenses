@@ -8,7 +8,7 @@ Define a `licenses.config.js` file:
 
 ```js
 module.exports = {
-    isValidLicense: license => {
+    isValidLicense: (license) => {
         const valid = new RegExp('\\b(mit|apache\\b.*2|bsd|isc|unlicense)\\b', 'i')
         return valid.test(license)
     }
@@ -34,6 +34,8 @@ yarn licenses audit --output-file=- --config=licenses.config.js
 this outputs a junit report.
 
 You can use `yarn licenses audit --summary` for a human readable report for local dev.
+
+By default license files are not traversed since there's no simple heuristic to parse the file, and developers often put custom wording inside. For this reason, if you would like to parse the license files, pass the `--loose` flag to the CLI.
 
 ## Contributors
 

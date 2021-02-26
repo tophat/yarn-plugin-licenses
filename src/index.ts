@@ -11,11 +11,11 @@ import {
     miscUtils,
     structUtils,
 } from '@yarnpkg/core'
-import { npath, ppath } from '@yarnpkg/fslib'
+import { FakeFS, PortablePath, npath, ppath } from '@yarnpkg/fslib'
 import { Command, Option, Usage } from 'clipanion'
 import junitBuilder from 'junit-report-builder'
 
-import { ResultMap, printTable } from './utils'
+import { ResultMap, prettifyLocator, printTable } from './utils'
 
 type LICENSE_FAILURE_TYPE = 'missing' | 'incompatible'
 
@@ -41,7 +41,9 @@ type LicenseResults = {
     ignored: ResultMap<string, Result>
 }
 
-type LicensePredicate = (license: string) => boolean
+type LicensePredicate = (license: string, isFile: boolean) => boolean
+
+type PackageNamePredicate = (packageName: string) => boolean
 class AuditLicensesCommand extends Command<CommandContext> {
     static paths = [['licenses', 'audit']]
 
@@ -54,8 +56,9 @@ class AuditLicensesCommand extends Command<CommandContext> {
     outputFile?: string = Option.String('--output-file', { required: false })
     configFile?: string = Option.String('--config', { required: false })
     summary: boolean = Option.Boolean('--summary', false)
+    looseMode: boolean = Option.Boolean('--loose', false)
 
-    ignorePackages = new Set<string>()
+    ignorePackagesPredicate: PackageNamePredicate = () => false
     isValidLicensePredicate: LicensePredicate = () => false
 
     async execute(): Promise<number> {
@@ -76,6 +79,7 @@ class AuditLicensesCommand extends Command<CommandContext> {
             const results = await this.collectResults({
                 configuration,
                 project,
+                looseMode: this.looseMode,
             })
 
             await this.buildJUnitReport({
@@ -106,10 +110,24 @@ class AuditLicensesCommand extends Command<CommandContext> {
             npath.toPortablePath(this.configFile),
         )
         const config = miscUtils.dynamicRequireNoCache(configPPath)
-        const ignorePackages: string[] | undefined = config?.ignorePackages
+
+        const ignorePackages = config?.ignorePackages
         if (ignorePackages) {
-            this.ignorePackages = new Set<string>(ignorePackages)
+            if (typeof ignorePackages === 'function') {
+                this.ignorePackagesPredicate = ignorePackages
+            } else if (ignorePackages instanceof RegExp) {
+                this.ignorePackagesPredicate = (license: string) =>
+                    ignorePackages.test(license)
+            } else if (
+                ignorePackages instanceof Set ||
+                ignorePackages instanceof Array
+            ) {
+                const ignorePackagesSet = new Set<string>(ignorePackages)
+                this.ignorePackagesPredicate = (packageName: string) =>
+                    ignorePackagesSet.has(packageName)
+            }
         }
+
         const isValidLicensePredicate = config?.isValidLicense
         if (isValidLicensePredicate) {
             if (typeof isValidLicensePredicate === 'function') {
@@ -126,9 +144,11 @@ class AuditLicensesCommand extends Command<CommandContext> {
     async collectResults({
         configuration,
         project,
+        looseMode,
     }: {
         configuration: Configuration
         project: Project
+        looseMode: boolean
     }): Promise<LicenseResults> {
         const cache = await Cache.find(configuration)
         const fetcher = await configuration.makeFetcher()
@@ -144,6 +164,9 @@ class AuditLicensesCommand extends Command<CommandContext> {
         }
 
         for (const pkg of project.storedPackages.values()) {
+            if (structUtils.isVirtualLocator(pkg)) continue
+            if (pkg.reference.startsWith('workspace:')) continue
+
             const { packageFs, prefixPath } = await fetcher.fetch(pkg, {
                 project,
                 fetcher,
@@ -152,32 +175,46 @@ class AuditLicensesCommand extends Command<CommandContext> {
                 checksums: project.storedChecksums,
             })
 
-            const manifest = await Manifest.find(prefixPath, {
-                baseFs: packageFs,
-            })
+            let manifest: Manifest | null = null
 
-            const license = await this.parseLicense({
-                manifest,
-            })
-            const { reason, pass } = await this.isAllowableLicense({
-                license,
-            })
-            const result = {
-                license: license || undefined,
-                reason,
-                repository: manifest.raw?.repository?.url || undefined,
+            try {
+                manifest = await Manifest.find(prefixPath, {
+                    baseFs: packageFs,
+                })
+            } catch {
+                continue
             }
 
-            const fullName = structUtils.stringifyIdent(pkg)
-            const fullNameWithRef = structUtils.stringifyLocator(pkg)
+            try {
+                const { license, licenseFile } = await this.parseLicense({
+                    manifest,
+                    packageFs,
+                    prefixPath,
+                    looseMode,
+                })
+                const { reason, pass } = await this.isAllowableLicense({
+                    license: license || licenseFile || null,
+                    isFile: Boolean(licenseFile),
+                })
+                const result = {
+                    license: license || undefined,
+                    reason,
+                    repository: manifest.raw?.repository?.url || undefined,
+                }
 
-            // ignorePackages operates without reference
-            if (this.ignorePackages.has(fullName)) {
-                results.ignored.merge(fullNameWithRef, result)
-            } else if (pass) {
-                results.pass.merge(fullNameWithRef, result)
-            } else {
-                results.fail.merge(fullNameWithRef, result)
+                const fullName = structUtils.stringifyIdent(pkg)
+                const fullNameWithRef = prettifyLocator(pkg)
+
+                // ignorePackages operates without reference
+                if (this.ignorePackagesPredicate(fullName)) {
+                    results.ignored.merge(fullNameWithRef, result)
+                } else if (pass) {
+                    results.pass.merge(fullNameWithRef, result)
+                } else {
+                    results.fail.merge(fullNameWithRef, result)
+                }
+            } catch {
+                continue
             }
         }
 
@@ -215,7 +252,7 @@ class AuditLicensesCommand extends Command<CommandContext> {
         }
 
         if (outputFile === '-') {
-            stdout.write(junitBuilder.build())
+            stdout.write(`${junitBuilder.build()}\n`)
         } else {
             junitBuilder.writeTo(outputFile)
         }
@@ -244,7 +281,7 @@ class AuditLicensesCommand extends Command<CommandContext> {
             printTable(table, stdout)
             if (this.configFile) {
                 stdout.write(
-                    `\nNOTE: For false positives, exceptions may be added to: ${this.configFile}\n`,
+                    `\nNOTE: For false positives, exceptions may be added to: ${this.configFile}\n\n`,
                 )
             }
         } else {
@@ -254,10 +291,36 @@ class AuditLicensesCommand extends Command<CommandContext> {
 
     async parseLicense({
         manifest,
+        packageFs,
+        prefixPath,
+        looseMode,
     }: {
         manifest: Manifest
-    }): Promise<string | null> {
-        return manifest.license
+        packageFs: FakeFS<PortablePath>
+        prefixPath: PortablePath
+        looseMode: boolean
+    }): Promise<{ license?: string; licenseFile?: string }> {
+        const license = manifest.license || ''
+        if (
+            (!license || new RegExp('see license', 'i').test(license)) &&
+            looseMode
+        ) {
+            try {
+                const licensePath = ppath.join(
+                    prefixPath,
+                    npath.toPortablePath('./LICENSE'),
+                )
+                return {
+                    licenseFile: await packageFs.readFilePromise(
+                        licensePath,
+                        'utf8',
+                    ),
+                }
+            } catch {
+                /* ignore */
+            }
+        }
+        return { license }
     }
 
     async isMissing({ license }: { license: string }): Promise<boolean> {
@@ -267,11 +330,13 @@ class AuditLicensesCommand extends Command<CommandContext> {
 
     async isAllowableLicense({
         license,
+        isFile,
     }: {
         license: string | null
+        isFile: boolean
     }): Promise<LicenseCheckResult> {
         if (license && !(await this.isMissing({ license }))) {
-            if (this.isValidLicensePredicate(license)) {
+            if (this.isValidLicensePredicate(license, isFile)) {
                 return { pass: true }
             }
             return { pass: false, reason: 'incompatible' }
