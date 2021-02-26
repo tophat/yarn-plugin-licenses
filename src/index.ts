@@ -9,12 +9,13 @@ import {
     Project,
     StreamReport,
     miscUtils,
+    structUtils,
 } from '@yarnpkg/core'
 import { npath, ppath } from '@yarnpkg/fslib'
 import { Command, Option, Usage } from 'clipanion'
 import junitBuilder from 'junit-report-builder'
 
-import { ResultMap, identToFullName, printTable } from './utils'
+import { ResultMap, printTable } from './utils'
 
 type LICENSE_FAILURE_TYPE = 'missing' | 'incompatible'
 
@@ -167,8 +168,8 @@ class AuditLicensesCommand extends Command<CommandContext> {
                 repository: manifest.raw?.repository?.url || undefined,
             }
 
-            const fullName = identToFullName(pkg)
-            const fullNameWithRef = `${fullName}@${pkg.reference}`
+            const fullName = structUtils.stringifyIdent(pkg)
+            const fullNameWithRef = structUtils.stringifyLocator(pkg)
 
             // ignorePackages operates without reference
             if (this.ignorePackages.has(fullName)) {
