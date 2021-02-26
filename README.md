@@ -27,7 +27,7 @@ module.exports = {
 and then:
 
 ```
-yarn import plugin <path-to-git>
+yarn import plugin https://raw.githubusercontent.com/tophat/yarn-plugin-licenses/master/bundles/%40yarnpkg/plugin-licenses-audit.js
 yarn licenses audit --output-file=- --config=licenses.config.js
 ```
 
