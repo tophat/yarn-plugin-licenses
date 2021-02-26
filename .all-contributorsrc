@@ -1,0 +1,26 @@
+{
+  "projectName": "yarn-plugin-licenses",
+  "projectOwner": "tophat",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitConvention": "none",
+  "contributors": [
+    {
+      "login": "noahnu",
+      "name": "Noah",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1297096?v=4",
+      "profile": "https://noahnu.com/",
+      "contributions": [
+        "code",
+        "infra"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true
+}
