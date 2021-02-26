@@ -1,5 +1,5 @@
 {
-  "name": "yarn-plugin-licenses-audit",
+  "name": "@tophat/yarn-plugin-licenses-audit",
   "version": "0.0.1",
   "description": "Yarn Berry plugin to audit dependency licenses",
   "main": "./src/index.ts",
