@@ -14,7 +14,6 @@ node_modules
 coverage
 lib
 artifacts
-bundles
 *.junit.xml
 website/build
 
