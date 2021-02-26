@@ -1,5 +1,15 @@
 import { Writable } from 'stream'
 
+import { Package, structUtils } from '@yarnpkg/core'
+
+export const prettifyLocator = (pkg: Package): string => {
+    const name = structUtils.stringifyLocator(pkg)
+    if (name.indexOf('::') >= 0) {
+        return name.substring(0, name.indexOf('::'))
+    }
+    return name
+}
+
 export class ResultMap<K, V> {
     private _map: Map<K, V>
     private _defaultValue: V
@@ -47,15 +57,19 @@ export const printTable = (array: string[][], streamOut: Writable): void => {
     array.unshift(headers)
 
     const gutterSize = 2
-    const widths = headers.map(h => h.length + gutterSize)
-    array.forEach(row =>
+    const gutterMarker = ' '.repeat(gutterSize)
+    const widths = headers.map(h => h.length)
+
+    for (const row of array) {
         row.forEach((datum, index) => {
-            widths[index] = Math.max(widths[index], datum.length + gutterSize)
-        }),
-    )
+            widths[index] = Math.max(widths[index], datum.length)
+        })
+    }
 
     const padColumn = (datum: string, index: number) =>
-        `${datum}${' '.repeat(Math.max(0, widths[index] - datum.length))}`
+        datum.padEnd(Math.max(0, widths[index]))
 
-    array.forEach(row => streamOut.write(`${row.map(padColumn).join('  ')}\n`))
+    array.forEach(row =>
+        streamOut.write(`${row.map(padColumn).join(gutterMarker)}\n`),
+    )
 }
