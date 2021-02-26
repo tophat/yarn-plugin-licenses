@@ -1,7 +1,5 @@
 import { Writable } from 'stream'
 
-import { Ident } from '@yarnpkg/core'
-
 export class ResultMap<K, V> {
     private _map: Map<K, V>
     private _defaultValue: V
@@ -39,13 +37,6 @@ export class ResultMap<K, V> {
     get size(): number {
         return this._map.size
     }
-}
-
-export const identToFullName = (ident: Ident): string => {
-    if (ident.scope) {
-        return `@${ident.scope}/${ident.name}`
-    }
-    return ident.name
 }
 
 export const printTable = (array: string[][], streamOut: Writable): void => {
