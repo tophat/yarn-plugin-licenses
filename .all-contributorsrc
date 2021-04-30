@@ -19,6 +19,15 @@
         "code",
         "infra"
       ]
+    },
+    {
+      "login": "Kurt-von-Laven",
+      "name": "Kurt von Laven",
+      "avatar_url": "https://avatars.githubusercontent.com/u/974910?v=4",
+      "profile": "http://www.linkedin.com/in/kurtvonlaven/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
