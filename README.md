@@ -1,5 +1,7 @@
 # yarn-plugin-licenses
 
+[![Discord](https://img.shields.io/discord/809577721751142410)](https://discord.gg/YhK3GFcZrk)
+
 Yarn Berry plugin to enforce valid licenses used in a project.
 
 ## Usage
