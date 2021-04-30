@@ -292,9 +292,9 @@ class AuditLicensesCommand extends Command<CommandContext> {
         }
     }
 
-    coerceToString(field: unknown) {
-        const string = String(field);
-        return (typeof field === 'string' || field === string) ? string : null;
+    coerceToString(field: unknown): string | null {
+        const string = String(field)
+        return typeof field === 'string' || field === string ? string : null
     }
 
     parseLicenseManifestField(field: unknown): string | null {
@@ -302,15 +302,15 @@ class AuditLicensesCommand extends Command<CommandContext> {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const licenses = field as Array<any>
             const licenseTypes = licenses.reduce((licenseTypes, license) => {
-                const type = coerceToString(license.type);
+                const type = this.coerceToString(license.type)
                 if (type) {
-                    licenseTypes.push(type);
+                    licenseTypes.push(type)
                 }
-                return licenseTypes;
-            }, []);
-            return licenseTypes.length ? `(${licenseTypes.join(' AND ')})` : '';
+                return licenseTypes
+            }, [])
+            return licenseTypes.length ? `(${licenseTypes.join(' AND ')})` : ''
         }
-        return coerceToString(field);
+        return this.coerceToString(field)
     }
 
     async parseLicense({
