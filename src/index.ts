@@ -44,6 +44,9 @@ type LicenseResults = {
 type LicensePredicate = (license: string, isFile: boolean) => boolean
 
 type PackageNamePredicate = (packageName: string) => boolean
+
+const LICENSE_FILES = ['./LICENSE', './LICENCE']
+
 class AuditLicensesCommand extends Command<CommandContext> {
     static paths = [['licenses', 'audit']]
 
@@ -289,6 +292,18 @@ class AuditLicensesCommand extends Command<CommandContext> {
         }
     }
 
+    parseLicenseManifestField(field: unknown): string | null {
+        if (Array.isArray(field)) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const licenses = field as Array<any>
+            return String(licenses[0]?.type ?? '')
+        }
+        if (typeof field === 'string' || field === String(field)) {
+            return String(field)
+        }
+        return null
+    }
+
     async parseLicense({
         manifest,
         packageFs,
@@ -300,24 +315,29 @@ class AuditLicensesCommand extends Command<CommandContext> {
         prefixPath: PortablePath
         looseMode: boolean
     }): Promise<{ license?: string; licenseFile?: string }> {
-        const license = manifest.license || ''
+        // "licenses" is not valid syntax, and the license metadata should be fixed upstream,
+        // however it's still a valid license, so we'll try parse it
+        const license =
+            this.parseLicenseManifestField(
+                manifest.license ?? manifest.raw.licenses,
+            ) ?? ''
         if (
             (!license || new RegExp('see license', 'i').test(license)) &&
             looseMode
         ) {
-            try {
-                const licensePath = ppath.join(
-                    prefixPath,
-                    npath.toPortablePath('./LICENSE'),
-                )
-                return {
-                    licenseFile: await packageFs.readFilePromise(
-                        licensePath,
-                        'utf8',
-                    ),
-                }
-            } catch {
-                /* ignore */
+            for (const filename of LICENSE_FILES) {
+                try {
+                    const licensePath = ppath.join(
+                        prefixPath,
+                        npath.toPortablePath(filename),
+                    )
+                    return {
+                        licenseFile: await packageFs.readFilePromise(
+                            licensePath,
+                            'utf8',
+                        ),
+                    }
+                } catch {}
             }
         }
         return { license }
