@@ -292,16 +292,25 @@ class AuditLicensesCommand extends Command<CommandContext> {
         }
     }
 
+    coerceToString(field: unknown): string | null {
+        const string = String(field)
+        return typeof field === 'string' || field === string ? string : null
+    }
+
     parseLicenseManifestField(field: unknown): string | null {
         if (Array.isArray(field)) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const licenses = field as Array<any>
-            return String(licenses[0]?.type ?? '')
+            const licenseTypes = licenses.reduce((licenseTypes, license) => {
+                const type = this.coerceToString(license.type)
+                if (type) {
+                    licenseTypes.push(type)
+                }
+                return licenseTypes
+            }, [])
+            return licenseTypes.length ? `(${licenseTypes.join(' AND ')})` : ''
         }
-        if (typeof field === 'string' || field === String(field)) {
-            return String(field)
-        }
-        return null
+        return this.coerceToString(field)
     }
 
     async parseLicense({
