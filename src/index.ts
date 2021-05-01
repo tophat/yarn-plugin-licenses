@@ -308,7 +308,12 @@ class AuditLicensesCommand extends Command<CommandContext> {
                 }
                 return licenseTypes
             }, [])
-            return licenseTypes.length ? `(${licenseTypes.join(' AND ')})` : ''
+            if (!licenseTypes) {
+                return ''
+            }
+            return licenseTypes.length > 1
+                ? `(${licenseTypes.join(' AND ')})`
+                : licenseTypes[0]
         }
         return this.coerceToString(field)
     }
