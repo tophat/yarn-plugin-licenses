@@ -1,3 +1,5 @@
+'use strict'
+
 const CI = process.env.CI === '1'
 const ARTIFACT_DIR = process.env.ARTIFACT_DIR || 'artifacts'
 
