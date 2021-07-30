@@ -112,7 +112,7 @@ class AuditLicensesCommand extends Command<CommandContext> {
             ppath.cwd(),
             npath.toPortablePath(this.configFile),
         )
-        const config = miscUtils.dynamicRequireNoCache(configPPath)
+        const config = miscUtils.dynamicRequire(configPPath)
 
         const ignorePackages = config?.ignorePackages
         if (ignorePackages) {
