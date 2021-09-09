@@ -313,7 +313,8 @@ class AuditLicensesCommand extends Command<CommandContext> {
                 ? `(${licenseTypes.join(' OR ')})`
                 : licenseTypes[0] ?? null
         }
-        return this.coerceToString(field)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (field as any).type ?? this.coerceToString(field)
     }
 
     async parseLicense({
