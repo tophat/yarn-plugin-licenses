@@ -314,7 +314,7 @@ class AuditLicensesCommand extends Command<CommandContext> {
                 : licenseTypes[0] ?? null
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return (field as any).type ?? this.coerceToString(field)
+        return (field as any)?.type ?? this.coerceToString(field)
     }
 
     async parseLicense({
