@@ -1,4 +1,4 @@
-import { PassThrough, Writable } from 'stream'
+import { PassThrough } from 'stream'
 
 import {
     Cache,
@@ -11,41 +11,18 @@ import {
     miscUtils,
     structUtils,
 } from '@yarnpkg/core'
-import { FakeFS, PortablePath, npath, ppath } from '@yarnpkg/fslib'
+import { npath, ppath } from '@yarnpkg/fslib'
 import { Command, Option, Usage } from 'clipanion'
-import junitBuilder from 'junit-report-builder'
 
-import { ResultMap, prettifyLocator, printTable } from './utils'
-
-type LICENSE_FAILURE_TYPE = 'missing' | 'incompatible'
-
-const PRINTABLE_REASON: { [k in LICENSE_FAILURE_TYPE]: string } = {
-    missing: 'License could not be found.',
-    incompatible: 'License is incompatible.',
-}
-
-type LicenseCheckResult = {
-    reason?: LICENSE_FAILURE_TYPE
-    pass: boolean
-}
-
-type Result = {
-    reason?: LICENSE_FAILURE_TYPE
-    license?: string
-    repository?: string
-}
-
-type LicenseResults = {
-    pass: ResultMap<string, Result>
-    fail: ResultMap<string, Result>
-    ignored: ResultMap<string, Result>
-}
-
-type LicensePredicate = (license: string, isFile: boolean) => boolean
-
-type PackageNamePredicate = (packageName: string) => boolean
-
-const LICENSE_FILES = ['./LICENSE', './LICENCE']
+import { isAllowableLicense, parseLicense } from './parsers'
+import { buildJUnitReport, printSummary } from './reporter'
+import {
+    LicensePredicate,
+    LicenseResults,
+    PackageNamePredicate,
+    Result,
+} from './types'
+import { ResultMap, prettifyLocator } from './utils'
 
 class AuditLicensesCommand extends Command<CommandContext> {
     static paths = [['licenses', 'audit']]
@@ -85,16 +62,17 @@ class AuditLicensesCommand extends Command<CommandContext> {
                 looseMode: this.looseMode,
             })
 
-            await this.buildJUnitReport({
+            await buildJUnitReport({
                 results,
                 outputFile: this.outputFile,
                 stdout: this.context.stdout,
             })
 
             if (this.summary) {
-                await this.printSummary({
+                await printSummary({
                     results,
                     stdout: this.context.stdout,
+                    configFilename: this.configFile,
                 })
             }
 
@@ -189,15 +167,16 @@ class AuditLicensesCommand extends Command<CommandContext> {
             }
 
             try {
-                const { license, licenseFile } = await this.parseLicense({
+                const { license, licenseFile } = await parseLicense({
                     manifest,
                     packageFs,
                     prefixPath,
                     looseMode,
                 })
-                const { reason, pass } = await this.isAllowableLicense({
+                const { reason, pass } = await isAllowableLicense({
                     license: license || licenseFile || null,
                     isFile: Boolean(licenseFile),
+                    isValidLicensePredicate: this.isValidLicensePredicate,
                 })
                 const result = {
                     license: license || undefined,
@@ -222,159 +201,6 @@ class AuditLicensesCommand extends Command<CommandContext> {
         }
 
         return results
-    }
-
-    async buildJUnitReport({
-        results,
-        outputFile,
-        stdout,
-    }: {
-        results: LicenseResults
-        outputFile?: string
-        stdout: Writable
-    }): Promise<void> {
-        if (!outputFile) return
-
-        const suite = junitBuilder.testSuite().name('Dependency Licenses Audit')
-        for (const [name, result] of [
-            ...results.pass.entries(),
-            ...results.fail.entries(),
-            ...results.ignored.entries(),
-        ].sort()) {
-            const testCase = suite.testCase().name(name)
-            if (results.ignored.has(name)) {
-                testCase.skipped()
-            } else if (result.reason) {
-                testCase.failure(
-                    `License: ${result.license}. Reason: ${
-                        PRINTABLE_REASON[result.reason]
-                    }`,
-                    result.reason,
-                )
-            }
-        }
-
-        if (outputFile === '-') {
-            stdout.write(`${junitBuilder.build()}\n`)
-        } else {
-            junitBuilder.writeTo(outputFile)
-        }
-    }
-
-    async printSummary({
-        results,
-        stdout,
-    }: {
-        results: LicenseResults
-        stdout: Writable
-    }): Promise<void> {
-        const isFailure = results.fail.size !== 0
-
-        if (isFailure) {
-            const table = [['Package', 'License', 'Reason', 'Repository']]
-            const summaryResults = [
-                ...results.fail.entries(),
-            ].map(([name, result]) => [
-                name,
-                String(result.license || '?'),
-                String(result.reason || '?'),
-                String(result.repository || '?'),
-            ])
-            table.push(...summaryResults)
-            printTable(table, stdout)
-            if (this.configFile) {
-                stdout.write(
-                    `\nNOTE: For false positives, exceptions may be added to: ${this.configFile}\n\n`,
-                )
-            }
-        } else {
-            stdout.write('All packages have compatible licenses.\n')
-        }
-    }
-
-    coerceToString(field: unknown): string | null {
-        const string = String(field)
-        return typeof field === 'string' || field === string ? string : null
-    }
-
-    parseLicenseManifestField(field: unknown): string | null {
-        if (Array.isArray(field)) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const licenses = field as Array<any>
-            const licenseTypes = licenses.reduce((licenseTypes, license) => {
-                const type = this.coerceToString(license.type)
-                if (type) {
-                    licenseTypes.push(type)
-                }
-                return licenseTypes
-            }, [])
-
-            return licenseTypes.length > 1
-                ? `(${licenseTypes.join(' OR ')})`
-                : licenseTypes[0] ?? null
-        }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return (field as any)?.type ?? this.coerceToString(field)
-    }
-
-    async parseLicense({
-        manifest,
-        packageFs,
-        prefixPath,
-        looseMode,
-    }: {
-        manifest: Manifest
-        packageFs: FakeFS<PortablePath>
-        prefixPath: PortablePath
-        looseMode: boolean
-    }): Promise<{ license?: string; licenseFile?: string }> {
-        // "licenses" is not valid syntax, and the license metadata should be fixed upstream,
-        // however it's still a valid license, so we'll try parse it
-        const license =
-            this.parseLicenseManifestField(
-                manifest.license ?? manifest.raw.licenses,
-            ) ?? ''
-        if (
-            (!license || new RegExp('see license', 'i').test(license)) &&
-            looseMode
-        ) {
-            for (const filename of LICENSE_FILES) {
-                try {
-                    const licensePath = ppath.join(
-                        prefixPath,
-                        npath.toPortablePath(filename),
-                    )
-                    return {
-                        licenseFile: await packageFs.readFilePromise(
-                            licensePath,
-                            'utf8',
-                        ),
-                    }
-                } catch {}
-            }
-        }
-        return { license }
-    }
-
-    async isMissing({ license }: { license: string }): Promise<boolean> {
-        const pattern = new RegExp('\\b(unknown|see license)\\b', 'i')
-        return pattern.test(license)
-    }
-
-    async isAllowableLicense({
-        license,
-        isFile,
-    }: {
-        license: string | null
-        isFile: boolean
-    }): Promise<LicenseCheckResult> {
-        if (license && !(await this.isMissing({ license }))) {
-            if (this.isValidLicensePredicate(license, isFile)) {
-                return { pass: true }
-            }
-            return { pass: false, reason: 'incompatible' }
-        }
-        return { reason: 'missing', pass: false }
     }
 }
 
