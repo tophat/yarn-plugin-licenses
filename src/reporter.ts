@@ -32,9 +32,7 @@ export async function buildJUnitReport({
             testCase.skipped()
         } else if (result.reason) {
             testCase.failure(
-                `License: ${result.license}. Reason: ${
-                    PRINTABLE_REASON[result.reason]
-                }`,
+                `License: ${result.license}. Reason: ${PRINTABLE_REASON[result.reason]}`,
                 result.reason,
             )
         }
@@ -60,9 +58,7 @@ export async function printSummary({
 
     if (isFailure) {
         const table = [['Package', 'License', 'Reason', 'Repository']]
-        const summaryResults = [
-            ...results.fail.entries(),
-        ].map(([name, result]) => [
+        const summaryResults = [...results.fail.entries()].map(([name, result]) => [
             name,
             String(result.license || '?'),
             String(result.reason || '?'),

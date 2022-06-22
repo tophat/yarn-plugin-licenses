@@ -12,10 +12,7 @@ describe('parseLicense', () => {
         [{ license: '(MIT OR Apache-2.0)' }, '(MIT OR Apache-2.0)'],
 
         // deprecated styles
-        [
-            { licenses: [{ type: 'MIT' }, { type: 'Apache-2.0' }] },
-            '(MIT OR Apache-2.0)',
-        ],
+        [{ licenses: [{ type: 'MIT' }, { type: 'Apache-2.0' }] }, '(MIT OR Apache-2.0)'],
         [
             {
                 license: {
@@ -44,7 +41,7 @@ describe('parseLicense', () => {
 
     it.each(['LICENSE', 'LICENCE'])(
         'fallback to %s file in loose mode if no license in manifest',
-        async name => {
+        async (name) => {
             const { cwd, writeFile } = await setupProject()
             const manifestName = await writeFile('package.json', {})
 
@@ -63,10 +60,7 @@ describe('parseLicense', () => {
             await writeFile(name, 'Apache License')
 
             // still false because loose mode is disabled
-            const {
-                license: license1,
-                licenseFile: licenseFile1,
-            } = await parseLicense({
+            const { license: license1, licenseFile: licenseFile1 } = await parseLicense({
                 manifest,
                 packageFs: nodeFs,
                 prefixPath: cwd,
@@ -76,17 +70,14 @@ describe('parseLicense', () => {
             expect(licenseFile1).toBeFalsy()
 
             // loose mode enabled
-            const {
-                license: license2,
-                licenseFile: licenseFile2,
-            } = await parseLicense({
+            const { license: license2, licenseFile: licenseFile2 } = await parseLicense({
                 manifest,
                 packageFs: nodeFs,
                 prefixPath: cwd,
                 looseMode: true,
             })
             expect(license2).toBeFalsy()
-            expect(licenseFile2).toEqual('Apache License')
+            expect(licenseFile2).toBe('Apache License')
         },
     )
 })

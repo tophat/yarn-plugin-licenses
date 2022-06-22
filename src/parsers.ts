@@ -21,9 +21,7 @@ function parseLicenseManifestField(field: unknown): string | null {
             return licenseTypes
         }, [])
 
-        return licenseTypes.length > 1
-            ? `(${licenseTypes.join(' OR ')})`
-            : licenseTypes[0] ?? null
+        return licenseTypes.length > 1 ? `(${licenseTypes.join(' OR ')})` : licenseTypes[0] ?? null
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (field as any)?.type ?? coerceToString(field)
@@ -46,21 +44,12 @@ export async function parseLicense({
         parseLicenseManifestField(
             manifest.license ?? manifest.raw.licenses ?? manifest.raw.license,
         ) ?? ''
-    if (
-        (!license || new RegExp('see license', 'i').test(license)) &&
-        looseMode
-    ) {
+    if ((!license || new RegExp('see license', 'i').test(license)) && looseMode) {
         for (const filename of LICENSE_FILES) {
             try {
-                const licensePath = ppath.join(
-                    prefixPath,
-                    npath.toPortablePath(filename),
-                )
+                const licensePath = ppath.join(prefixPath, npath.toPortablePath(filename))
                 return {
-                    licenseFile: await packageFs.readFilePromise(
-                        licensePath,
-                        'utf8',
-                    ),
+                    licenseFile: await packageFs.readFilePromise(licensePath, 'utf8'),
                 }
             } catch {}
         }
