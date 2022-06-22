@@ -2101,7 +2101,7 @@ __metadata:
     "@yarnpkg/sdks": ^3.0.0-rc.9
     all-contributors-cli: ^6.20.0
     babel-jest: ^28.1.1
-    clipanion: ^3.1.0
+    clipanion: ^3.2.0-rc.11
     commitizen: ^4.2.4
     eslint: ^8.17.0
     eslint-config-prettier: ^8.5.0
@@ -3849,18 +3849,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clipanion@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "clipanion@npm:3.1.0"
-  dependencies:
-    typanion: ^3.3.1
-  peerDependencies:
-    typanion: "*"
-  checksum: bf350082e8953c697cfe35262845700012bdeb1cc490f81cd17de2fe985c8861750164509795ad95d3ee6a2b3742a1d5c6394cdf0f3ff4c4d24173a9fec3418e
-  languageName: node
-  linkType: hard
-
-"clipanion@npm:^3.2.0-rc.10, clipanion@npm:^3.2.0-rc.4":
+"clipanion@npm:^3.2.0-rc.10, clipanion@npm:^3.2.0-rc.11, clipanion@npm:^3.2.0-rc.4":
   version: 3.2.0-rc.11
   resolution: "clipanion@npm:3.2.0-rc.11"
   dependencies:
@@ -9246,7 +9235,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typanion@npm:^3.3.0, typanion@npm:^3.3.1, typanion@npm:^3.8.0":
+"typanion@npm:^3.3.0, typanion@npm:^3.8.0":
   version: 3.9.0
   resolution: "typanion@npm:3.9.0"
   checksum: db635975e86c50399fe019010e489a9adb24a74cd19b15efb1d0f434c7dccd842a9402a6a6d60e8ab6d9f7949fd8604a019802a022427e78dbbe2e74f143527b
