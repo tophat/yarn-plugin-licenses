@@ -19,7 +19,9 @@ import { buildJUnitReport, printSummary } from './reporter'
 import { LicensePredicate, LicenseResults, PackageNamePredicate, Result } from './types'
 import { ResultMap, prettifyLocator } from './utils'
 
-class AuditLicensesCommand extends Command<CommandContext> {
+class AuditLicensesCommand extends Command<
+    CommandContext & { env: Record<string, string | undefined> }
+> {
     static paths = [['licenses', 'audit']]
 
     static usage: Usage = Command.Usage({
