@@ -1,17 +1,20 @@
 module.exports = {
     root: true,
-    parser: '@typescript-eslint/parser',
-    plugins: ['@typescript-eslint', 'prettier'],
-    extends: [
-        'plugin:@typescript-eslint/recommended',
-        '@tophat/eslint-config/base',
-        '@tophat/eslint-config/jest',
-        'prettier',
-    ],
+    extends: ['@tophat/eslint-config/base', '@tophat/eslint-config/jest'],
     rules: {
-        'no-empty': 'off',
-        'no-unused-vars': 'off', // covered by typescript eslint
-        'import/named': 'off',
+        'prettier/prettier': [
+            'error',
+            {
+                printWidth: 100,
+                tabWidth: 4,
+                semi: false,
+                trailingComma: 'all' /* Reduces git diff. */,
+                singleQuote: true,
+                arrowParens: 'always', // Reduces character diff when adding Typescript types.
+            },
+        ],
+        '@typescript-eslint/no-non-null-assertion': 'off',
+        'no-empty': ['error', { allowEmptyCatch: true }],
         'import/order': [
             'error',
             {
@@ -29,13 +32,5 @@ module.exports = {
             },
         ],
     },
-    ignorePatterns: ['.*', '**/*.js', 'lib'],
-    settings: {
-        'import/parsers': {
-            '@typescript-eslint/parser': ['.ts', '.js'],
-        },
-        'import/resolver': {
-            typescript: './tsconfig.json',
-        },
-    },
+    ignorePatterns: ['**/.*'],
 }

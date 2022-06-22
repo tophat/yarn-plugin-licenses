@@ -19,16 +19,11 @@ afterEach(async () => {
 
 interface Project {
     cwd: PortablePath
-    writeFile(
-        filename: string,
-        data: string | Record<string, unknown>,
-    ): Promise<PortablePath>
+    writeFile(filename: string, data: string | Record<string, unknown>): Promise<PortablePath>
 }
 
 export async function setupProject(): Promise<Project> {
-    const tmpDir = await fs.promises.mkdtemp(
-        path.join(os.tmpdir(), 'licenses-'),
-    )
+    const tmpDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'licenses-'))
     trackedTmpDirs.add(tmpDir)
 
     async function writeFile(filename, data) {

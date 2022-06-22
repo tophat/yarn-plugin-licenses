@@ -16,15 +16,12 @@ import { Command, Option, Usage } from 'clipanion'
 
 import { isAllowableLicense, parseLicense } from './parsers'
 import { buildJUnitReport, printSummary } from './reporter'
-import {
-    LicensePredicate,
-    LicenseResults,
-    PackageNamePredicate,
-    Result,
-} from './types'
+import { LicensePredicate, LicenseResults, PackageNamePredicate, Result } from './types'
 import { ResultMap, prettifyLocator } from './utils'
 
-class AuditLicensesCommand extends Command<CommandContext> {
+class AuditLicensesCommand extends Command<
+    CommandContext & { env: Record<string, string | undefined> }
+> {
     static paths = [['licenses', 'audit']]
 
     static usage: Usage = Command.Usage({
@@ -43,14 +40,8 @@ class AuditLicensesCommand extends Command<CommandContext> {
 
     async execute(): Promise<number> {
         try {
-            const configuration = await Configuration.find(
-                this.context.cwd,
-                this.context.plugins,
-            )
-            const { project } = await Project.find(
-                configuration,
-                this.context.cwd,
-            )
+            const configuration = await Configuration.find(this.context.cwd, this.context.plugins)
+            const { project } = await Project.find(configuration, this.context.cwd)
 
             await project.restoreInstallState()
 
@@ -86,10 +77,7 @@ class AuditLicensesCommand extends Command<CommandContext> {
     async parseConfigFile(): Promise<void> {
         if (!this.configFile) return
 
-        const configPPath = ppath.resolve(
-            ppath.cwd(),
-            npath.toPortablePath(this.configFile),
-        )
+        const configPPath = ppath.resolve(ppath.cwd(), npath.toPortablePath(this.configFile))
         const config = miscUtils.dynamicRequire(configPPath)
 
         const ignorePackages = config?.ignorePackages
@@ -97,12 +85,8 @@ class AuditLicensesCommand extends Command<CommandContext> {
             if (typeof ignorePackages === 'function') {
                 this.ignorePackagesPredicate = ignorePackages
             } else if (ignorePackages instanceof RegExp) {
-                this.ignorePackagesPredicate = (license: string) =>
-                    ignorePackages.test(license)
-            } else if (
-                ignorePackages instanceof Set ||
-                ignorePackages instanceof Array
-            ) {
+                this.ignorePackagesPredicate = (license: string) => ignorePackages.test(license)
+            } else if (ignorePackages instanceof Set || ignorePackages instanceof Array) {
                 const ignorePackagesSet = new Set<string>(ignorePackages)
                 this.ignorePackagesPredicate = (packageName: string) =>
                     ignorePackagesSet.has(packageName)

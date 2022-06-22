@@ -58,7 +58,7 @@ export const printTable = (array: string[][], streamOut: Writable): void => {
 
     const gutterSize = 2
     const gutterMarker = ' '.repeat(gutterSize)
-    const widths = headers.map(h => h.length)
+    const widths = headers.map((h) => h.length)
 
     for (const row of array) {
         row.forEach((datum, index) => {
@@ -66,10 +66,7 @@ export const printTable = (array: string[][], streamOut: Writable): void => {
         })
     }
 
-    const padColumn = (datum: string, index: number) =>
-        datum.padEnd(Math.max(0, widths[index]))
+    const padColumn = (datum: string, index: number) => datum.padEnd(Math.max(0, widths[index]))
 
-    array.forEach(row =>
-        streamOut.write(`${row.map(padColumn).join(gutterMarker)}\n`),
-    )
+    array.forEach((row) => streamOut.write(`${row.map(padColumn).join(gutterMarker)}\n`))
 }

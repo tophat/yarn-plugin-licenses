@@ -16,13 +16,13 @@ jobs:
     runs-on: ubuntu-20.04
     if: "github.event_name == 'pull_request' && !contains(github.event.head_commit.message, '[skip ci]')"
     steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@v3.0.2
           with:
             ref: ${{ github.event.pull_request.head.sha }}
             fetch-depth: 0
         - uses: ./.github/actions/detect-env
         - name: Setup Node.js
-          uses: actions/setup-node@v1
+          uses: actions/setup-node@v3.3.0
           with:
             node-version: ${{ env.NODE_VERSION }}
         - name: Create artifacts directory
@@ -46,12 +46,12 @@ jobs:
     runs-on: ubuntu-20.04
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@v3.0.2
           with:
             fetch-depth: 0
         - uses: ./.github/actions/detect-env
         - name: Setup Node.js
-          uses: actions/setup-node@v1
+          uses: actions/setup-node@v3.3.0
           with:
             node-version: ${{ env.NODE_VERSION }}
         - name: Create artifacts directory
@@ -63,7 +63,7 @@ jobs:
             path: |
               ./.yarn
               ./.pnp.*
-            key: ${{ env.NODE_VERSION }}-${{ env.YARN_VERSION }}-${{ hashFiles('yarn.lock') }}
+            key: ${{ env.NODE_VERSION }}-${{ hashFiles('yarn.lock') }}
         - name: Install dependencies
           run: yarn install --immutable
         - name: Linting
@@ -89,10 +89,10 @@ jobs:
     needs: [tests]
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@v3.0.2
         - uses: ./.github/actions/detect-env
         - name: Setup Node.js
-          uses: actions/setup-node@v1
+          uses: actions/setup-node@v3.3.0
           with:
             node-version: ${{ env.NODE_VERSION }}
         - name: Create artifacts directory
@@ -104,7 +104,7 @@ jobs:
             path: |
               ./.yarn
               ./.pnp.*
-            key: ${{ env.NODE_VERSION }}-${{ env.YARN_VERSION }}-${{ hashFiles('yarn.lock') }}
+            key: ${{ env.NODE_VERSION }}-${{ hashFiles('yarn.lock') }}
         - name: Install dependencies
           run: yarn install --immutable
         - name: Build
