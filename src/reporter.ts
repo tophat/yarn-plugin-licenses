@@ -1,8 +1,9 @@
+import { writeFileSync } from 'fs'
 import { Writable } from 'stream'
 
 import junitBuilder from 'junit-report-builder'
 
-import { LICENSE_FAILURE_TYPE, LicenseResults } from './types'
+import { LICENSE_FAILURE_TYPE, LicenseResults, Result } from './types'
 import { printTable } from './utils'
 
 const PRINTABLE_REASON: { [k in LICENSE_FAILURE_TYPE]: string } = {
@@ -78,5 +79,38 @@ export async function printSummary({
         }
     } else {
         stdout.write('All packages have compatible licenses.\n')
+    }
+}
+
+export async function writeCsvReport({
+    results,
+    outputFile,
+    stdout,
+}: {
+    results: LicenseResults
+    outputFile?: string
+    stdout: Writable
+}): Promise<void> {
+    const rows: string[][] = []
+    const columns: Array<keyof Result | 'name'> = ['name', 'license', 'homepage', 'repository']
+    rows.push(columns)
+    for (const [name, result] of [
+        ...results.pass.entries(),
+        ...results.fail.entries(),
+        ...results.ignored.entries(),
+    ].sort()) {
+        rows.push(columns.map((k) => (k === 'name' ? name : result[k] ?? '?')))
+    }
+    const csvData = rows
+        .map((r) =>
+            r.map((v) => (/[",\n\r\t]/.test(v) ? `"${v.replace('"', '""')}"` : v)).join(','),
+        )
+        .map((r) => `${r}\n`)
+        .join('')
+
+    if (outputFile === '-') {
+        stdout.write(csvData)
+    } else {
+        writeFileSync(outputFile, csvData, { encoding: 'utf8' })
     }
 }

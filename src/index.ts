@@ -15,7 +15,7 @@ import { npath, ppath } from '@yarnpkg/fslib'
 import { Command, Option, Usage } from 'clipanion'
 
 import { isAllowableLicense, parseLicense } from './parsers'
-import { buildJUnitReport, printSummary } from './reporter'
+import { buildJUnitReport, printSummary, writeCsvReport } from './reporter'
 import { LicensePredicate, LicenseResults, PackageNamePredicate, Result } from './types'
 import { ResultMap, prettifyLocator } from './utils'
 
@@ -30,6 +30,7 @@ class AuditLicensesCommand extends Command<
         examples: [],
     })
 
+    outputCsv?: string = Option.String('--output-csv', { required: false })
     outputFile?: string = Option.String('--output-file', { required: false })
     configFile?: string = Option.String('--config', { required: false })
     summary: boolean = Option.Boolean('--summary', false)
@@ -64,6 +65,14 @@ class AuditLicensesCommand extends Command<
                     results,
                     stdout: this.context.stdout,
                     configFilename: this.configFile,
+                })
+            }
+
+            if (this.outputCsv) {
+                await writeCsvReport({
+                    results,
+                    stdout: this.context.stdout,
+                    outputFile: this.outputCsv,
                 })
             }
 
