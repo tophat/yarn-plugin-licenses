@@ -3,6 +3,8 @@ declare module 'junit-report-builder' {
         name(v: string): TestCase
         failure(a: string, b: string): void
         skipped(): void
+        standardError(a: string): void
+        standardOutput(a: string): void
     }
 
     interface TestSuite {

@@ -28,6 +28,11 @@ export async function buildJUnitReport({
         ...results.ignored.entries(),
     ].sort()) {
         const testCase = suite.testCase().name(name)
+        testCase.standardOutput(
+            Object.entries(result)
+                .map((p) => p.join(': '))
+                .join('\n'),
+        )
         if (results.ignored.has(name)) {
             testCase.skipped()
         } else if (result.reason) {
