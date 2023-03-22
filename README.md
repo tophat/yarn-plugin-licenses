@@ -30,10 +30,12 @@ and then:
 
 ```
 yarn plugin import https://raw.githubusercontent.com/tophat/yarn-plugin-licenses/master/bundles/@yarnpkg/plugin-licenses-audit.js
-yarn licenses audit --output-file=- --config=licenses.config.js
+yarn licenses audit --output-file=licenses.junit.xml --output-csv=licenses.csv --config=licenses.config.js --summary
 ```
 
-this outputs a junit report.
+this outputs a junit report to licenses.junit.xml, a CSV report to licenses.csv, and a summary of any violations to
+the console.  You can omit some options to change which files are created or what is output, and if you pass `-` as
+a filename it will output to stdout instead of to a file.
 
 You can use `yarn licenses audit --summary` for a human readable report for local dev.
 
