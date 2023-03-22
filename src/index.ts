@@ -94,7 +94,8 @@ class AuditLicensesCommand extends Command<
             if (typeof ignorePackages === 'function') {
                 this.ignorePackagesPredicate = ignorePackages
             } else if (ignorePackages instanceof RegExp) {
-                this.ignorePackagesPredicate = (packageName: string, license: string) => ignorePackages.test(license)
+                this.ignorePackagesPredicate = (packageName: string, license: string) =>
+                    ignorePackages.test(license)
             } else if (ignorePackages instanceof Set || ignorePackages instanceof Array) {
                 const ignorePackagesSet = new Set<string>(ignorePackages)
                 this.ignorePackagesPredicate = (packageName: string, _license: string) =>
