@@ -163,6 +163,7 @@ class AuditLicensesCommand extends Command<
                     isValidLicensePredicate: this.isValidLicensePredicate,
                 })
                 const result = {
+                    homepage: manifest.raw?.homepage,
                     license: license || undefined,
                     reason,
                     repository: manifest.raw?.repository?.url || undefined,

@@ -8,6 +8,7 @@ export type LicenseCheckResult = {
 }
 
 export type Result = {
+    homepage?: string
     reason?: LICENSE_FAILURE_TYPE
     license?: string
     repository?: string
