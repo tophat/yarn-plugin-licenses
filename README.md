@@ -58,10 +58,13 @@ By default license files are not traversed since there's no simple heuristic to 
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
-  <tr>
-    <td align="center"><a href="https://noahnu.com/"><img src="https://avatars.githubusercontent.com/u/1297096?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Noah</b></sub></a><br /><a href="https://github.com/tophat/yarn-plugin-licenses/commits?author=noahnu" title="Code">💻</a> <a href="#infra-noahnu" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
-    <td align="center"><a href="http://www.linkedin.com/in/kurtvonlaven/"><img src="https://avatars.githubusercontent.com/u/974910?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Kurt von Laven</b></sub></a><br /><a href="https://github.com/tophat/yarn-plugin-licenses/commits?author=Kurt-von-Laven" title="Code">💻</a></td>
-  </tr>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://noahnu.com/"><img src="https://avatars.githubusercontent.com/u/1297096?v=4?s=100" width="100px;" alt="Noah"/><br /><sub><b>Noah</b></sub></a><br /><a href="https://github.com/tophat/yarn-plugin-licenses/commits?author=noahnu" title="Code">💻</a> <a href="#infra-noahnu" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.linkedin.com/in/kurtvonlaven/"><img src="https://avatars.githubusercontent.com/u/974910?v=4?s=100" width="100px;" alt="Kurt von Laven"/><br /><sub><b>Kurt von Laven</b></sub></a><br /><a href="https://github.com/tophat/yarn-plugin-licenses/commits?author=Kurt-von-Laven" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://dobesv.com"><img src="https://avatars.githubusercontent.com/u/327833?v=4?s=100" width="100px;" alt="Dobes Vandermeer"/><br /><sub><b>Dobes Vandermeer</b></sub></a><br /><a href="https://github.com/tophat/yarn-plugin-licenses/commits?author=dobesv" title="Code">💻</a></td>
+    </tr>
+  </tbody>
 </table>
 
 <!-- markdownlint-restore -->
