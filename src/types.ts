@@ -8,6 +8,7 @@ export type LicenseCheckResult = {
 }
 
 export type Result = {
+    homepage?: string
     reason?: LICENSE_FAILURE_TYPE
     license?: string
     repository?: string
@@ -21,4 +22,4 @@ export type LicenseResults = {
 
 export type LicensePredicate = (license: string, isFile: boolean) => boolean
 
-export type PackageNamePredicate = (packageName: string) => boolean
+export type PackageNamePredicate = (packageName: string, license: string) => boolean

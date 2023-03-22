@@ -15,7 +15,7 @@ import { npath, ppath } from '@yarnpkg/fslib'
 import { Command, Option, Usage } from 'clipanion'
 
 import { isAllowableLicense, parseLicense } from './parsers'
-import { buildJUnitReport, printSummary } from './reporter'
+import { buildJUnitReport, printSummary, writeCsvReport } from './reporter'
 import { LicensePredicate, LicenseResults, PackageNamePredicate, Result } from './types'
 import { ResultMap, prettifyLocator } from './utils'
 
@@ -30,6 +30,7 @@ class AuditLicensesCommand extends Command<
         examples: [],
     })
 
+    outputCsv?: string = Option.String('--output-csv', { required: false })
     outputFile?: string = Option.String('--output-file', { required: false })
     configFile?: string = Option.String('--config', { required: false })
     summary: boolean = Option.Boolean('--summary', false)
@@ -67,6 +68,14 @@ class AuditLicensesCommand extends Command<
                 })
             }
 
+            if (this.outputCsv) {
+                await writeCsvReport({
+                    results,
+                    stdout: this.context.stdout,
+                    outputFile: this.outputCsv,
+                })
+            }
+
             return results.fail.size === 0 ? 0 : 1
         } catch (err) {
             this.context.stderr.write(`${String(err)}\n`)
@@ -85,10 +94,11 @@ class AuditLicensesCommand extends Command<
             if (typeof ignorePackages === 'function') {
                 this.ignorePackagesPredicate = ignorePackages
             } else if (ignorePackages instanceof RegExp) {
-                this.ignorePackagesPredicate = (license: string) => ignorePackages.test(license)
+                this.ignorePackagesPredicate = (packageName: string, license: string) =>
+                    ignorePackages.test(license)
             } else if (ignorePackages instanceof Set || ignorePackages instanceof Array) {
                 const ignorePackagesSet = new Set<string>(ignorePackages)
-                this.ignorePackagesPredicate = (packageName: string) =>
+                this.ignorePackagesPredicate = (packageName: string, _license: string) =>
                     ignorePackagesSet.has(packageName)
             }
         }
@@ -163,6 +173,7 @@ class AuditLicensesCommand extends Command<
                     isValidLicensePredicate: this.isValidLicensePredicate,
                 })
                 const result = {
+                    homepage: manifest.raw?.homepage,
                     license: license || undefined,
                     reason,
                     repository: manifest.raw?.repository?.url || undefined,
@@ -172,7 +183,7 @@ class AuditLicensesCommand extends Command<
                 const fullNameWithRef = prettifyLocator(pkg)
 
                 // ignorePackages operates without reference
-                if (this.ignorePackagesPredicate(fullName)) {
+                if (this.ignorePackagesPredicate(fullName, license || 'unknown')) {
                     results.ignored.merge(fullNameWithRef, result)
                 } else if (pass) {
                     results.pass.merge(fullNameWithRef, result)
