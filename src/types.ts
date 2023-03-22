@@ -22,4 +22,4 @@ export type LicenseResults = {
 
 export type LicensePredicate = (license: string, isFile: boolean) => boolean
 
-export type PackageNamePredicate = (packageName: string) => boolean
+export type PackageNamePredicate = (packageName: string, license: string) => boolean

@@ -94,10 +94,10 @@ class AuditLicensesCommand extends Command<
             if (typeof ignorePackages === 'function') {
                 this.ignorePackagesPredicate = ignorePackages
             } else if (ignorePackages instanceof RegExp) {
-                this.ignorePackagesPredicate = (license: string) => ignorePackages.test(license)
+                this.ignorePackagesPredicate = (packageName: string, license: string) => ignorePackages.test(license)
             } else if (ignorePackages instanceof Set || ignorePackages instanceof Array) {
                 const ignorePackagesSet = new Set<string>(ignorePackages)
-                this.ignorePackagesPredicate = (packageName: string) =>
+                this.ignorePackagesPredicate = (packageName: string, _license: string) =>
                     ignorePackagesSet.has(packageName)
             }
         }
@@ -182,7 +182,7 @@ class AuditLicensesCommand extends Command<
                 const fullNameWithRef = prettifyLocator(pkg)
 
                 // ignorePackages operates without reference
-                if (this.ignorePackagesPredicate(fullName)) {
+                if (this.ignorePackagesPredicate(fullName, license || 'unknown')) {
                     results.ignored.merge(fullNameWithRef, result)
                 } else if (pass) {
                     results.pass.merge(fullNameWithRef, result)
