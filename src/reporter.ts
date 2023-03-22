@@ -63,12 +63,13 @@ export async function printSummary({
     const isFailure = results.fail.size !== 0
 
     if (isFailure) {
-        const table = [['Package', 'License', 'Reason', 'Repository']]
+        const table = [['Package', 'License', 'Reason', 'Repository', 'Home Page']]
         const summaryResults = [...results.fail.entries()].map(([name, result]) => [
             name,
             String(result.license || '?'),
             String(result.reason || '?'),
             String(result.repository || '?'),
+            String(result.homepage || '?'),
         ])
         table.push(...summaryResults)
         printTable(table, stdout)
