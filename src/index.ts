@@ -4,6 +4,7 @@ import {
     Cache,
     type CommandContext,
     Configuration,
+    type LocatorHash,
     Manifest,
     type Plugin,
     Project,
@@ -143,7 +144,20 @@ class AuditLicensesCommand extends Command<
             ignored: new ResultMap<string, Result>({}),
         }
 
-        for (const pkg of project.storedPackages.values()) {
+        const locatorHashes = Array.from(
+            new Set(
+                miscUtils.sortMap(project.storedResolutions.values(), [
+                    (locatorHash: LocatorHash) => {
+                        const pkg = project.storedPackages.get(locatorHash)!
+                        return structUtils.stringifyLocator(pkg)
+                    },
+                ]),
+            ),
+        )
+
+        for (const locatorHash of locatorHashes) {
+            const pkg = project.storedPackages.get(locatorHash)
+            if (!pkg) continue
             if (structUtils.isVirtualLocator(pkg)) continue
             if (pkg.reference.startsWith('workspace:')) continue
 
@@ -151,10 +165,13 @@ class AuditLicensesCommand extends Command<
                 project,
                 fetcher,
                 cache,
+                cacheOptions: {
+                    mockedPackages: project.disabledLocators,
+                    unstablePackages: project.conditionalLocators,
+                },
                 report,
                 checksums: project.storedChecksums,
             })
-
             let manifest: Manifest | null = null
 
             try {
@@ -164,7 +181,6 @@ class AuditLicensesCommand extends Command<
             } catch {
                 continue
             }
-
             try {
                 const { license, licenseFile } = await parseLicense({
                     manifest,
