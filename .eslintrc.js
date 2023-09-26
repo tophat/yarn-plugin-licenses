@@ -1,6 +1,10 @@
 module.exports = {
     root: true,
     extends: ['@tophat/eslint-config/base', '@tophat/eslint-config/jest'],
+    parserOptions: {
+        project: ['./tsconfig.json'],
+        tsconfigRootDir: __dirname,
+    },
     rules: {
         'prettier/prettier': [
             'error',
@@ -32,5 +36,5 @@ module.exports = {
             },
         ],
     },
-    ignorePatterns: ['**/.*'],
+    ignorePatterns: ['**/.*', 'bundles'],
 }

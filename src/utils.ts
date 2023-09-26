@@ -1,10 +1,10 @@
-import { Writable } from 'stream'
+import { type Writable } from 'stream'
 
-import { Package, structUtils } from '@yarnpkg/core'
+import { type Package, structUtils } from '@yarnpkg/core'
 
 export const prettifyLocator = (pkg: Package): string => {
     const name = structUtils.stringifyLocator(pkg)
-    if (name.indexOf('::') >= 0) {
+    if (name.includes('::')) {
         return name.substring(0, name.indexOf('::'))
     }
     return name

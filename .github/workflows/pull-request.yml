@@ -25,6 +25,8 @@ jobs:
           uses: actions/setup-node@v3.3.0
           with:
             node-version: ${{ env.NODE_VERSION }}
+        - name: Enable Corepack
+          run: corepack enable
         - name: Create artifacts directory
           run: mkdir -p ${{ env.ARTIFACT_DIR }}
         - name: Run Commit Watch
@@ -54,6 +56,8 @@ jobs:
           uses: actions/setup-node@v3.3.0
           with:
             node-version: ${{ env.NODE_VERSION }}
+        - name: Enable Corepack
+          run: corepack enable
         - name: Create artifacts directory
           run: mkdir -p ${{ env.ARTIFACT_DIR }}
         - name: Restore yarn cache
@@ -68,6 +72,8 @@ jobs:
           run: yarn install --immutable
         - name: Linting
           run: yarn lint:ci
+        - name: Type Check
+          run: yarn types
         - name: Set GitHub user for tests
           run: |
             git config --global user.email "opensource@tophat.com"
@@ -95,6 +101,8 @@ jobs:
           uses: actions/setup-node@v3.3.0
           with:
             node-version: ${{ env.NODE_VERSION }}
+        - name: Enable Corepack
+          run: corepack enable
         - name: Create artifacts directory
           run: mkdir -p ${{ env.ARTIFACT_DIR }}
         - name: Restore yarn cache

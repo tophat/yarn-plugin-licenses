@@ -1,7 +1,7 @@
-import { Manifest } from '@yarnpkg/core'
-import { FakeFS, PortablePath, npath, ppath } from '@yarnpkg/fslib'
+import { type Manifest } from '@yarnpkg/core'
+import { type FakeFS, type PortablePath, npath, ppath } from '@yarnpkg/fslib'
 
-import { LicenseCheckResult, LicensePredicate } from './types'
+import { type LicenseCheckResult, type LicensePredicate } from './types'
 
 const LICENSE_FILES = ['./LICENSE', './LICENCE']
 function coerceToString(field: unknown): string | null {

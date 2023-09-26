@@ -2,7 +2,7 @@ import fs from 'fs'
 import os from 'os'
 import path from 'path'
 
-import { PortablePath, npath } from '@yarnpkg/fslib'
+import { type PortablePath, npath } from '@yarnpkg/fslib'
 
 const trackedTmpDirs = new Set<string>()
 
@@ -26,7 +26,7 @@ export async function setupProject(): Promise<Project> {
     const tmpDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'licenses-'))
     trackedTmpDirs.add(tmpDir)
 
-    async function writeFile(filename, data) {
+    async function writeFile(filename: string, data: unknown) {
         const fullpath = path.resolve(tmpDir, filename)
         await fs.promises.writeFile(
             fullpath,
