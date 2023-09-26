@@ -40,7 +40,7 @@
     "@types/node": "^18.17.14",
     "@typescript-eslint/eslint-plugin": "^5",
     "@typescript-eslint/parser": "^5",
-    "@yarnpkg/builder": "^3",
+    "@yarnpkg/builder": "^3.3.0",
     "@yarnpkg/cli": "^3",
     "@yarnpkg/core": "^3",
     "@yarnpkg/fslib": "^2",
