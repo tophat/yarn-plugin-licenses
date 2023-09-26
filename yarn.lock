@@ -2196,7 +2196,7 @@ __metadata:
     "@tophat/eslint-config": ^8.0.1
     "@tophat/eslint-import-resolver-require": ^0.1.5
     "@types/jest": ^29.5.5
-    "@types/node": ^18.0.0
+    "@types/node": ^18.17.14
     "@typescript-eslint/eslint-plugin": ^5
     "@typescript-eslint/parser": ^5
     "@yarnpkg/builder": ^3
@@ -2449,7 +2449,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^18.0.0":
+"@types/node@npm:^18.17.14":
   version: 18.18.0
   resolution: "@types/node@npm:18.18.0"
   checksum: 61bcffa28eb713e7a4c66fd369df603369c3f834a783faeced95fe3e78903faa25f1a704d49e054f41d71b7915eeb066d10a37cc699421fcf5dd267f96ad5808
