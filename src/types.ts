@@ -1,4 +1,4 @@
-import { ResultMap } from './utils'
+import { type ResultMap } from './utils'
 
 export type LICENSE_FAILURE_TYPE = 'missing' | 'incompatible'
 

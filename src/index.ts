@@ -2,21 +2,26 @@ import { PassThrough } from 'stream'
 
 import {
     Cache,
-    CommandContext,
+    type CommandContext,
     Configuration,
     Manifest,
-    Plugin,
+    type Plugin,
     Project,
     StreamReport,
     miscUtils,
     structUtils,
 } from '@yarnpkg/core'
 import { npath, ppath } from '@yarnpkg/fslib'
-import { Command, Option, Usage } from 'clipanion'
+import { Command, Option, type Usage } from 'clipanion'
 
 import { isAllowableLicense, parseLicense } from './parsers'
 import { buildJUnitReport, printSummary, writeCsvReport } from './reporter'
-import { LicensePredicate, LicenseResults, PackageNamePredicate, Result } from './types'
+import {
+    type LicensePredicate,
+    type LicenseResults,
+    type PackageNamePredicate,
+    type Result,
+} from './types'
 import { ResultMap, prettifyLocator } from './utils'
 
 class AuditLicensesCommand extends Command<

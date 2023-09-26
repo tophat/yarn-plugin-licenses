@@ -1,9 +1,9 @@
 import { writeFileSync } from 'fs'
-import { Writable } from 'stream'
+import { type Writable } from 'stream'
 
 import junitBuilder from 'junit-report-builder'
 
-import { LICENSE_FAILURE_TYPE, LicenseResults, Result } from './types'
+import { type LICENSE_FAILURE_TYPE, type LicenseResults, type Result } from './types'
 import { printTable } from './utils'
 
 const PRINTABLE_REASON: { [k in LICENSE_FAILURE_TYPE]: string } = {
@@ -111,7 +111,7 @@ export async function writeCsvReport({
 
     if (outputFile === '-') {
         stdout.write(csvData)
-    } else {
+    } else if (outputFile) {
         writeFileSync(outputFile, csvData, { encoding: 'utf8' })
     }
 }
