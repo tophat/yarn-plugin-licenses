@@ -37,8 +37,19 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "sarahsporck",
+      "name": "Sarah",
+      "avatar_url": "https://avatars.githubusercontent.com/u/28013368?v=4",
+      "profile": "https://github.com/sarahsporck",
+      "contributions": [
+        "code",
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
-  "skipCi": true
+  "skipCi": true,
+  "commitType": "docs"
 }
