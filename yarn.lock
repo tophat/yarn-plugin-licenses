@@ -2204,7 +2204,7 @@ __metadata:
     "@yarnpkg/core": ^3
     "@yarnpkg/fslib": ^2
     "@yarnpkg/libzip": ^2.3.0
-    "@yarnpkg/plugin-essentials": ^3.2.1
+    "@yarnpkg/plugin-essentials": ^3.3.0
     "@yarnpkg/plugin-git": ^2.6.1
     "@yarnpkg/plugin-npm": ^2.7.1
     "@yarnpkg/plugin-pack": ^3.1.2
@@ -2879,7 +2879,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yarnpkg/plugin-essentials@npm:^3.2.1, @yarnpkg/plugin-essentials@npm:^3.3.0":
+"@yarnpkg/plugin-essentials@npm:^3.3.0":
   version: 3.3.0
   resolution: "@yarnpkg/plugin-essentials@npm:3.3.0"
   dependencies:
