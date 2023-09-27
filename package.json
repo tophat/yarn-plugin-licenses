@@ -43,7 +43,7 @@
     "@yarnpkg/builder": "^3.3.0",
     "@yarnpkg/cli": "^3",
     "@yarnpkg/core": "^3",
-    "@yarnpkg/fslib": "^2",
+    "@yarnpkg/fslib": "^2.10.3",
     "@yarnpkg/libzip": "^2.3.0",
     "@yarnpkg/plugin-essentials": "^3.3.0",
     "@yarnpkg/plugin-git": "^2.6.6",
