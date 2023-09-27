@@ -2200,7 +2200,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^5.62.0
     "@typescript-eslint/parser": ^5.62.0
     "@yarnpkg/builder": ^3.3.0
-    "@yarnpkg/cli": ^3
+    "@yarnpkg/cli": ^3.6.3
     "@yarnpkg/core": ^3
     "@yarnpkg/fslib": ^2
     "@yarnpkg/libzip": ^2.3.0
@@ -2648,7 +2648,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yarnpkg/cli@npm:^3, @yarnpkg/cli@npm:^3.6.0":
+"@yarnpkg/cli@npm:^3.6.0, @yarnpkg/cli@npm:^3.6.3":
   version: 3.6.3
   resolution: "@yarnpkg/cli@npm:3.6.3"
   dependencies:
