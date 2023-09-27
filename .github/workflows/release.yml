@@ -38,7 +38,7 @@ jobs:
           run: echo "No publish capability at the moment."
         - name: Upload Artifacts
           if: ${{ always() }}
-          uses: actions/upload-artifact@v2
+          uses: actions/upload-artifact@v3
           with:
             name: reports-and-build-artifacts
             path: |
