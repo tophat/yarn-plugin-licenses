@@ -2202,7 +2202,7 @@ __metadata:
     "@yarnpkg/builder": ^3.3.0
     "@yarnpkg/cli": ^3.6.3
     "@yarnpkg/core": ^3
-    "@yarnpkg/fslib": ^2
+    "@yarnpkg/fslib": ^2.10.3
     "@yarnpkg/libzip": ^2.3.0
     "@yarnpkg/plugin-essentials": ^3.3.0
     "@yarnpkg/plugin-git": ^2.6.6
@@ -2769,7 +2769,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yarnpkg/fslib@npm:^2, @yarnpkg/fslib@npm:^2.10.0, @yarnpkg/fslib@npm:^2.10.1, @yarnpkg/fslib@npm:^2.10.2, @yarnpkg/fslib@npm:^2.10.3, @yarnpkg/fslib@npm:^2.5.0, @yarnpkg/fslib@npm:^2.6.2, @yarnpkg/fslib@npm:^2.7.1, @yarnpkg/fslib@npm:^2.9.0":
+"@yarnpkg/fslib@npm:^2.10.0, @yarnpkg/fslib@npm:^2.10.1, @yarnpkg/fslib@npm:^2.10.2, @yarnpkg/fslib@npm:^2.10.3, @yarnpkg/fslib@npm:^2.5.0, @yarnpkg/fslib@npm:^2.6.2, @yarnpkg/fslib@npm:^2.7.1, @yarnpkg/fslib@npm:^2.9.0":
   version: 2.10.3
   resolution: "@yarnpkg/fslib@npm:2.10.3"
   dependencies:
