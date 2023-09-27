@@ -42,7 +42,7 @@
     "@typescript-eslint/parser": "^5.62.0",
     "@yarnpkg/builder": "^3.3.0",
     "@yarnpkg/cli": "^3.6.3",
-    "@yarnpkg/core": "^3",
+    "@yarnpkg/core": "^3.5.3",
     "@yarnpkg/fslib": "^2.10.3",
     "@yarnpkg/libzip": "^2.3.0",
     "@yarnpkg/plugin-essentials": "^3.3.0",
