@@ -2205,7 +2205,7 @@ __metadata:
     "@yarnpkg/fslib": ^2
     "@yarnpkg/libzip": ^2.3.0
     "@yarnpkg/plugin-essentials": ^3.3.0
-    "@yarnpkg/plugin-git": ^2.6.1
+    "@yarnpkg/plugin-git": ^2.6.6
     "@yarnpkg/plugin-npm": ^2.7.1
     "@yarnpkg/plugin-pack": ^3.1.2
     "@yarnpkg/sdks": ^3.0.0-rc.51
@@ -2914,7 +2914,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@yarnpkg/plugin-git@npm:^2.6.1, @yarnpkg/plugin-git@npm:^2.6.6":
+"@yarnpkg/plugin-git@npm:^2.6.6":
   version: 2.6.6
   resolution: "@yarnpkg/plugin-git@npm:2.6.6"
   dependencies:
