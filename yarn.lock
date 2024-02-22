@@ -2325,7 +2325,7 @@ __metadata:
     "@tophat/conventional-changelog-config": "npm:^1.0.1"
     "@tophat/eslint-config": "npm:^8.0.1"
     "@tophat/eslint-import-resolver-require": "npm:^0.1.5"
-    "@types/jest": "npm:^29.5.5"
+    "@types/jest": "npm:^29.5.12"
     "@types/node": "npm:^18.18.0"
     "@typescript-eslint/eslint-plugin": "npm:^5.62.0"
     "@typescript-eslint/parser": "npm:^5.62.0"
@@ -2518,13 +2518,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^29.5.5":
-  version: 29.5.5
-  resolution: "@types/jest@npm:29.5.5"
+"@types/jest@npm:^29.5.12":
+  version: 29.5.12
+  resolution: "@types/jest@npm:29.5.12"
   dependencies:
     expect: "npm:^29.0.0"
     pretty-format: "npm:^29.0.0"
-  checksum: 85bf86fd31ed9b76c26abc6bf771d09a9a8ff9362c81be353b8cf8ba102e09741b7f6951dca09aaa56d5fb410291e1eb5650b508da2fb3d36a0f035a91552a0d
+  checksum: 312e8dcf92cdd5a5847d6426f0940829bca6fe6b5a917248f3d7f7ef5d85c9ce78ef05e47d2bbabc40d41a930e0e36db2d443d2610a9e3db9062da2d5c904211
   languageName: node
   linkType: hard
 
