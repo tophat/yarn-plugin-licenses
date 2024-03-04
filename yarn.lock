@@ -163,9 +163,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/cli@npm:^7.23.0":
-  version: 7.23.0
-  resolution: "@babel/cli@npm:7.23.0"
+"@babel/cli@npm:^7.23.9":
+  version: 7.23.9
+  resolution: "@babel/cli@npm:7.23.9"
   dependencies:
     "@jridgewell/trace-mapping": "npm:^0.3.17"
     "@nicolo-ribaudo/chokidar-2": "npm:2.1.8-no-fsevents.3"
@@ -186,7 +186,7 @@ __metadata:
   bin:
     babel: ./bin/babel.js
     babel-external-helpers: ./bin/babel-external-helpers.js
-  checksum: a08dab5b18e839562f8a9664b09b5b30ef43a4a81ab54c2a3ad6810d2e6d382fd5b8b8ec33841e84692e18df3927c0792018a896ca107c970f3fea75f9043417
+  checksum: 18eed31590528d4f932f27621f6e4f25b5eb78c6ec01fe1f1bc006c268e10f4ce17ce5392ff192f62094d202a34587e060d346a7d2d9e2737183c93cea47527e
   languageName: node
   linkType: hard
 
@@ -2315,7 +2315,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@tophat/yarn-plugin-licenses-audit@workspace:."
   dependencies:
-    "@babel/cli": "npm:^7.23.0"
+    "@babel/cli": "npm:^7.23.9"
     "@babel/core": "npm:^7.23.3"
     "@babel/plugin-transform-runtime": "npm:^7.23.3"
     "@babel/preset-env": "npm:^7.23.3"
