@@ -5,6 +5,9 @@ import {
     type CommandContext,
     Configuration,
     type LocatorHash,
+    type DescriptorHash,
+    type IdentHash,
+    type Descriptor,
     Manifest,
     type Plugin,
     Project,
@@ -44,6 +47,7 @@ class AuditLicensesCommand extends Command<
 
     ignorePackagesPredicate: PackageNamePredicate = () => false
     isValidLicensePredicate: LicensePredicate = () => false
+    isValidDevLicensePredicate: LicensePredicate = () => false
 
     async execute(): Promise<number> {
         try {
@@ -120,6 +124,20 @@ class AuditLicensesCommand extends Command<
                 throw new Error('Invalid config option value: isValidLicense')
             }
         }
+
+        const isValidDevLicensePredicate = config?.isValidDevLicense
+        if (isValidDevLicensePredicate) {
+            if (typeof isValidDevLicensePredicate === 'function') {
+                this.isValidDevLicensePredicate = isValidDevLicensePredicate
+            } else if (isValidDevLicensePredicate instanceof RegExp) {
+                this.isValidDevLicensePredicate = (license: string) =>
+                    isValidDevLicensePredicate.test(license)
+            } else {
+                this.isValidDevLicensePredicate = this.isValidLicensePredicate
+            }
+        } else {
+            this.isValidDevLicensePredicate = this.isValidLicensePredicate
+        }
     }
 
     async collectResults({
@@ -144,18 +162,53 @@ class AuditLicensesCommand extends Command<
             ignored: new ResultMap<string, Result>({}),
         }
 
-        const locatorHashes = Array.from(
+        const nonDevDependencies: Array<DescriptorHash> = [];
+
+        const depQueue: Array<[ IdentHash, Descriptor ]> = [];
+        const seen: Set<IdentHash> = new Set();
+
+        // Starting from top level workspace definitions, recurse through the dependencies of non-dev
+        // dependencies to assign whether or not this is for production deployment.
+        // Based on logic from @yarnpkg/plugin-npm-cli/lib/npmAuditUtils
+        for (const workspace of project.workspaces) {
+            for (const dependency of workspace.anchoredPackage.dependencies.values()) {
+                const isDevDependency = workspace.manifest.devDependencies.has(dependency.identHash);
+                seen.add(dependency.identHash);
+                if (!isDevDependency) {
+                    nonDevDependencies.push(dependency.descriptorHash);
+                    const resolution = project.storedResolutions.get(dependency.descriptorHash);
+                    const pkg = project.storedPackages.get(resolution!);
+                    depQueue.push(...pkg!.dependencies.entries());
+                }
+            }
+        }
+
+        while (depQueue.length > 0) {
+            const [ ident, desc ] = depQueue.shift()!;
+            if (!seen.has(ident)) {
+                seen.add(ident);
+                nonDevDependencies.push(desc.descriptorHash);
+                const resolution = project.storedResolutions.get(desc.descriptorHash);
+                const pkg = project.storedPackages.get(resolution!);
+                depQueue.push(...pkg!.dependencies.entries());
+            }
+        }
+
+        const mappedResolutions = [ ...project.storedResolutions.entries() ].map(([ d, h ]) => ({ locatorHash: h, isDev: !nonDevDependencies.includes(d) }));
+
+        const locatorHashes: { locatorHash: LocatorHash, isDev: boolean }[] = Array.from(
             new Set(
-                miscUtils.sortMap(project.storedResolutions.values(), [
-                    (locatorHash: LocatorHash) => {
-                        const pkg = project.storedPackages.get(locatorHash)!
+                miscUtils.sortMap(mappedResolutions, [
+                    (entry: { locatorHash: LocatorHash, isDev: boolean }) => {
+                        const pkg = project.storedPackages.get(entry.locatorHash)!
                         return structUtils.stringifyLocator(pkg)
                     },
                 ]),
             ),
         )
 
-        for (const locatorHash of locatorHashes) {
+        for (const entry of locatorHashes) {
+            const { locatorHash, isDev } = entry;
             const pkg = project.storedPackages.get(locatorHash)
             if (!pkg) continue
             if (structUtils.isVirtualLocator(pkg)) continue
@@ -191,7 +244,7 @@ class AuditLicensesCommand extends Command<
                 const { reason, pass } = await isAllowableLicense({
                     license: license || licenseFile || null,
                     isFile: Boolean(licenseFile),
-                    isValidLicensePredicate: this.isValidLicensePredicate,
+                    isValidLicensePredicate: isDev ? this.isValidDevLicensePredicate : this.isValidLicensePredicate,
                 })
                 const result = {
                     homepage: manifest.raw?.homepage,
