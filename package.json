@@ -37,7 +37,7 @@
     "@tophat/eslint-config": "^8.0.1",
     "@tophat/eslint-import-resolver-require": "^0.1.5",
     "@types/jest": "^29.5.5",
-    "@types/node": "^18.18.0",
+    "@types/node": "^18.19.54",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "@yarnpkg/builder": "^4.0.0",
