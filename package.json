@@ -26,7 +26,7 @@
     "contrib:check": "all-contributors check"
   },
   "devDependencies": {
-    "@babel/cli": "^7.23.0",
+    "@babel/cli": "^7.25.7",
     "@babel/core": "^7.23.3",
     "@babel/plugin-transform-runtime": "^7.23.3",
     "@babel/preset-env": "^7.23.3",
